@@ -1,0 +1,10 @@
+kind: Task
+apiVersion: api.ipicture.vip/v1alpha1
+metadata:
+  name: my-task
+spec:
+  steps:
+    - name: step1
+      image: xxxxx
+    - name: step2
+      image: ooooo
