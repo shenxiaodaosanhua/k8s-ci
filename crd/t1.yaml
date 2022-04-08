@@ -5,6 +5,10 @@ metadata:
 spec:
   steps:
     - name: step1
-      image: xxxxx
+      image: busybox:1.28
+      command: ["sh"]
+      args: ["-c", "echo step1"]
     - name: step2
-      image: ooooo
+      image: busybox:1.28
+      command: [ "sh" ]
+      args: [ "-c", "echo step2" ]

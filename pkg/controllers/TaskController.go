@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"context"
-	"fmt"
+	"github.com/shenxiaodaosanhua/k8s-ci/pkg/apis/task/v1alpha1"
+	"github.com/shenxiaodaosanhua/k8s-ci/pkg/builder"
 	clientset "github.com/shenxiaodaosanhua/k8s-ci/pkg/client/clientset/versioned"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/tools/record"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
@@ -21,11 +21,16 @@ func NewTaskController(e record.EventRecorder, clientset *clientset.Clientset) *
 }
 
 func (c *TaskController) Reconcile(ctx context.Context, req reconcile.Request) (reconcile.Result, error) {
-	task, err := c.ApiV1alpha1().Tasks(req.Namespace).Get(ctx, req.Name, metav1.GetOptions{})
+	task := &v1alpha1.Task{}
+	err := c.Get(ctx, req.NamespacedName, task)
 	if err != nil {
 		return reconcile.Result{}, err
 	}
-	fmt.Println(task.Name)
+	//构建pod
+	err = builder.NewPodBuilder(task, c.Client).Builder(ctx)
+	if err != nil {
+		return reconcile.Result{}, err
+	}
 	return reconcile.Result{}, nil
 }
 
