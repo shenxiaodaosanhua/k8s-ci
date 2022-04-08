@@ -1,0 +1,29 @@
+kind: Pod
+apiVersion: v1
+metadata:
+  name: st
+  annotations:
+    build: two
+    builder: john-doe
+spec:
+  containers:
+    - name: step1
+      image: busybox:1.28
+      imagePullPolicy: IfNotPresent
+      command: [ "sh", "-c"]
+      args:
+        - while true; do
+          if [[ -e /etc/podinfo/annotations ]]; then
+          echo -en '\n\n'; cat /etc/podinfo/annotations; fi;
+          sleep 5;
+          done;
+      volumeMounts:
+        - mountPath: /etc/podinfo
+          name: podinfo
+  volumes:
+    - name: podinfo
+      downwardAPI:
+        items:
+          - path: "annotations"
+            fieldRef:
+              fieldPath: metadata.annotations
